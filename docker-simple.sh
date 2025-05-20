@@ -2,7 +2,7 @@
 
 # 使用简化版Dockerfile构建镜像
 echo "构建简化版Docker镜像..."
-docker build -t domainmonitoring:simple -f Dockerfile.simple .
+docker build -t domainmonitoring:simple -f Dockerfile.simple.new .
 
 # 运行容器
 echo "启动容器..."

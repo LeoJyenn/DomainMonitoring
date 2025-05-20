@@ -77,12 +77,20 @@
    bash docker-simple.sh
    ```
 
-3. 运行脚本构建并启动:
+3. 如遇到Dockerfile语法错误问题，请确保Dockerfile.simple中的RUN指令正确使用续行符(\):
+   ```Dockerfile
+   # 正确的语法
+   RUN npm ci --only=production && \
+       npm run build && \
+       npm cache clean --force
+   ```
+
+4. 运行脚本构建并启动:
    ```bash
    ./docker-simple.sh  # Linux/MacOS
    ```
 
-4. 访问应用:
+5. 访问应用:
    浏览器中打开 `http://localhost:9769`
 
 #### 2. 直接本地部署（无需Docker）

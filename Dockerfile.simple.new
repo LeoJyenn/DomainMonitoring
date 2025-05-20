@@ -1,0 +1,25 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# 复制应用程序文件
+COPY package.json package-lock.json ./
+COPY . .
+
+# 安装依赖并构建（使用安装好的依赖快速构建）
+RUN npm ci --only=production &&
+    npm run build &&
+    npm cache clean --force
+
+# 设置环境变量
+ENV NODE_ENV production
+ENV PORT 9769
+
+# 挂载数据目录
+VOLUME /app/data
+
+# 暴露端口
+EXPOSE 9769
+
+# 启动命令
+CMD ["npm", "run", "start"]
