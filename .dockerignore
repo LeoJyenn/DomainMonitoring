@@ -1,0 +1,35 @@
+# Docker 构建时忽略的文件
+
+# Git
+.git
+.gitignore
+
+# 依赖
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# 构建输出
+.next
+out
+
+# 开发环境文件
+.env
+.env.local
+.env.development
+.env.test
+
+# IDE 配置
+.vscode
+.idea
+
+# 缓存
+.cache
+.genkit
+
+# 其他
+.DS_Store
+README.md
+docker-compose.yml
+Dockerfile 

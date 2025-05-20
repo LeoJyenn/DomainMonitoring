@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  domain-monitor:
+    container_name: DomainMonitoring
+    image: DomainMonitoring:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "9769:9769"
+    volumes:
+      - domain_data:/app/data
+    env_file:
+      - docker-production.env
+    environment:
+      - NODE_ENV=production
+      - PORT=9769
+
+volumes:
+  domain_data:
+    driver: local 
