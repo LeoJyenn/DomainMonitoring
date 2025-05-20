@@ -30,3 +30,4 @@ docker buildx build --platform linux/amd64,linux/arm/v7 \
 
 echo "多架构镜像构建完成!"
 echo "可以通过 'docker-compose up -d' 启动服务"
+ 
