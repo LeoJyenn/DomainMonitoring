@@ -42,6 +42,48 @@
 4. 访问应用:
    浏览器中打开 `http://localhost:9769`
 
+### 其他部署方式
+
+#### 1. 使用简化版Docker（更快的构建）
+
+```bash
+# 为简化版Docker镜像添加执行权限
+chmod +x docker-simple.sh
+
+# 运行脚本构建并启动
+./docker-simple.sh
+```
+
+#### 2. 直接本地部署（无需Docker）
+
+```bash
+# 添加执行权限
+chmod +x deploy.sh
+
+# 运行部署脚本
+./deploy.sh
+```
+
+#### 3. 使用PM2进程管理器部署
+
+```bash
+# 添加执行权限
+chmod +x deploy-pm2.sh
+
+# 运行PM2部署脚本
+./deploy-pm2.sh
+```
+
+#### 4. 使用Nginx+Node部署
+
+```bash
+# 添加执行权限
+chmod +x nginx-node-deploy.sh
+
+# 运行Nginx部署脚本
+./nginx-node-deploy.sh
+```
+
 ### 手动开发/运行
 
 1. 安装依赖:
