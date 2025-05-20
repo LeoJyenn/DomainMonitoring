@@ -26,8 +26,8 @@
 
 2. 克隆仓库:
    ```bash
-   git clone <仓库地址>
-   cd 域名监控
+   git clone https://github.com/LeoJyenn/DomainMonitoring.git
+   cd DomainMonitoring
    ```
 
 3. 构建并启动容器:
@@ -44,45 +44,123 @@
 
 ### 其他部署方式
 
+所有部署方法的前置步骤：
+
+1. 克隆仓库（如果还没有）:
+   ```bash
+   git clone https://github.com/LeoJyenn/DomainMonitoring.git
+   ```
+
+2. 进入项目目录:
+   ```bash
+   cd DomainMonitoring  
+   ```
+
 #### 1. 使用简化版Docker（更快的构建）
 
-```bash
-# 为简化版Docker镜像添加执行权限
-chmod +x docker-simple.sh
+1. 确保系统已安装Docker
 
-# 运行脚本构建并启动
-./docker-simple.sh
-```
+2. 为脚本添加执行权限（Linux/MacOS）:
+   ```bash
+   chmod +x docker-simple.sh
+   ```
+   
+   Windows用户可跳过此步骤，直接使用:
+   ```powershell
+   # PowerShell
+   .\docker-simple.sh
+   ```
+   
+   或者:
+   ```cmd
+   # CMD
+   bash docker-simple.sh
+   ```
+
+3. 运行脚本构建并启动:
+   ```bash
+   ./docker-simple.sh  # Linux/MacOS
+   ```
+
+4. 访问应用:
+   浏览器中打开 `http://localhost:9769`
 
 #### 2. 直接本地部署（无需Docker）
 
-```bash
-# 添加执行权限
-chmod +x deploy.sh
+1. 确保系统已安装Node.js (推荐v18或更高版本)
 
-# 运行部署脚本
-./deploy.sh
-```
+2. 为脚本添加执行权限（Linux/MacOS）:
+   ```bash
+   chmod +x deploy.sh
+   ```
+   
+   Windows用户可跳过此步骤，直接使用:
+   ```powershell
+   # PowerShell
+   .\deploy.sh
+   ```
+   
+   或者:
+   ```cmd
+   # CMD
+   bash deploy.sh
+   ```
+
+3. 运行部署脚本:
+   ```bash
+   ./deploy.sh  # Linux/MacOS
+   ```
+
+4. 访问应用:
+   浏览器中打开 `http://localhost:9769`
 
 #### 3. 使用PM2进程管理器部署
 
-```bash
-# 添加执行权限
-chmod +x deploy-pm2.sh
+1. 确保系统已安装Node.js (推荐v18或更高版本)
 
-# 运行PM2部署脚本
-./deploy-pm2.sh
-```
+2. 为脚本添加执行权限（Linux/MacOS）:
+   ```bash
+   chmod +x deploy-pm2.sh
+   ```
+   
+   Windows用户可跳过此步骤，直接使用:
+   ```powershell
+   # PowerShell
+   .\deploy-pm2.sh
+   ```
+   
+   或者:
+   ```cmd
+   # CMD
+   bash deploy-pm2.sh
+   ```
+
+3. 运行PM2部署脚本:
+   ```bash
+   ./deploy-pm2.sh  # Linux/MacOS
+   ```
+
+4. 访问应用:
+   浏览器中打开 `http://localhost:9769`
 
 #### 4. 使用Nginx+Node部署
 
-```bash
-# 添加执行权限
-chmod +x nginx-node-deploy.sh
+1. 确保系统已安装Node.js和Nginx
 
-# 运行Nginx部署脚本
-./nginx-node-deploy.sh
-```
+2. 为脚本添加执行权限（Linux/MacOS）:
+   ```bash
+   chmod +x nginx-node-deploy.sh
+   ```
+   
+   Windows用户注意：此部署方式主要针对Linux系统，Windows用户需要手动配置Nginx
+
+3. 运行Nginx部署脚本:
+   ```bash
+   ./nginx-node-deploy.sh  # Linux/MacOS
+   ```
+
+4. 访问应用:
+   浏览器中打开服务器IP地址或域名
 
 ### 手动开发/运行
 
