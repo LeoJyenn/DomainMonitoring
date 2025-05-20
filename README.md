@@ -26,8 +26,8 @@
 
 2. 克隆仓库:
    ```bash
-   git clone <仓库地址>
-   cd 域名监控
+   git clone https://github.com/LeoJyenn/DomainMonitoring.git
+   cd DomainMonitoring
    ```
 
 3. 构建并启动容器:
@@ -53,7 +53,7 @@
 
 2. 进入项目目录:
    ```bash
-   cd DomainMonitoring  # 或者您的实际目录名
+   cd DomainMonitoring  
    ```
 
 #### 1. 使用简化版Docker（更快的构建）
