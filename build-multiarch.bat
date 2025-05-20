@@ -23,7 +23,7 @@ docker buildx inspect --bootstrap
 REM 构建多架构镜像
 echo 开始构建多架构Docker镜像...
 docker buildx build --platform linux/amd64,linux/arm/v7 ^
-  -t DomainMonitoring:latest ^
+  -t domainmonitoring:latest ^
   --load ^
   .
 

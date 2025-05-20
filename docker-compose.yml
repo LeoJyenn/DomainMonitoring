@@ -2,8 +2,8 @@ version: '3'
 
 services:
   domain-monitor:
-    container_name: DomainMonitoring
-    image: DomainMonitoring:latest
+    container_name: domainmonitoring
+    image: domainmonitoring:latest
     build:
       context: .
       dockerfile: Dockerfile
