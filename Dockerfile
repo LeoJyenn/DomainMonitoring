@@ -27,7 +27,8 @@ USER nextjs
 # 复制构建产物
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+# 如果有public目录，创建它
+RUN mkdir -p ./public
 
 # 挂载持久化卷的目录
 VOLUME /app/data
