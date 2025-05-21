@@ -15,13 +15,35 @@ fi
 echo "创建数据目录..."
 mkdir -p data
 
+# 设置npm镜像
+echo "设置npm镜像为淘宝镜像..."
+npm config set registry https://registry.npmmirror.com
+
 # 安装依赖
 echo "安装依赖（这可能需要几分钟时间）..."
-npm install
+npm install --registry=https://registry.npmmirror.com
+if [ $? -ne 0 ]; then
+    echo "依赖安装失败，尝试使用CNPM..."
+    npm install -g cnpm --registry=https://registry.npmmirror.com
+    cnpm install
 
-# 构建应用
-echo "构建应用..."
-npm run build
+    # 如果仍然失败，尝试使用国内CDN安装next
+    if [ $? -ne 0 ]; then
+        echo "使用CNPM安装失败，尝试直接安装关键依赖..."
+        npm install next@15.2.3 react@18.3.1 react-dom@18.3.1 --registry=https://registry.npmmirror.com
+    fi
+fi
+
+# 手动检查next命令是否可用，如果不可用则使用npx
+NEXT_CMD="./node_modules/.bin/next"
+if [ ! -f "$NEXT_CMD" ]; then
+    echo "使用npx构建应用..."
+    npx next build
+else
+    # 构建应用
+    echo "构建应用..."
+    npm run build
+fi
 
 # 获取服务器IP
 SERVER_IP=$(hostname -I | awk '{print $1}')
@@ -60,7 +82,7 @@ echo "重启Nginx (需要sudo权限)"
 sudo systemctl restart nginx
 
 # 检查端口是否被占用
-if lsof -Pi :9769 -sTCP:LISTEN -t >/dev/null ; then
+if lsof -Pi :9769 -sTCP:LISTEN -t >/dev/null; then
     echo "警告: 端口9769已被占用，尝试关闭现有进程..."
     kill $(lsof -t -i:9769) 2>/dev/null || true
     sleep 2
