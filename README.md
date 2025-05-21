@@ -1,5 +1,9 @@
 # 域名监控系统
 
+![License](https://img.shields.io/github/license/LeoJyenn/DomainMonitoring)
+![Issues](https://img.shields.io/github/issues/LeoJyenn/DomainMonitoring)
+![Stars](https://img.shields.io/github/stars/LeoJyenn/DomainMonitoring)
+
 域名监控系统是一个用于跟踪和管理域名到期时间的应用程序。它可以帮助您避免域名过期带来的问题
 
 ## 功能特点
@@ -168,3 +172,26 @@ PM2是Node.js应用程序的进程管理器，可以保持应用程序持续运�
 - 密码: admin
 
 首次登录后，请在设置中修改密码。
+
+## 参与贡献
+
+我们欢迎任何形式的贡献！如果您想要贡献代码，请查看 [贡献指南](CONTRIBUTING.md)。
+
+## 路线图
+
+- [ ] 添加邮件提醒功能
+- [ ] 支持批量导入域名
+- [ ] 添加更多自定义设置选项
+- [ ] 支持API集成
+
+## 许可证
+
+该项目采用 MIT 许可证 - 详情请查看 [LICENSE](LICENSE) 文件
+
+## 联系方式
+
+如有任何问题或建议，请通过 GitHub Issues 联系我们。
+
+## 致谢
+
+感谢所有为本项目做出贡献的开发者！

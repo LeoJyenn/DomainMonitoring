@@ -1,0 +1,183 @@
+From 0fd6bd2da1cca986cd28c170ddf5684c67431fe1 Mon Sep 17 00:00:00 2001
+From: LeoJyenn <77463167+LeoJyenn@users.noreply.github.com>
+Date: Wed, 21 May 2025 17:17:48 +0800
+Subject: [PATCH] =?UTF-8?q?=E4=BC=98=E5=8C=96=E9=83=A8=E7=BD=B2=E8=84=9A?=
+ =?UTF-8?q?=E6=9C=AC=EF=BC=8C=E8=A7=A3=E5=86=B3NPM=E4=BE=9D=E8=B5=96?=
+ =?UTF-8?q?=E5=92=8CURL=E9=97=AE=E9=A2=98=EF=BC=8C=E6=B7=BB=E5=8A=A0?=
+ =?UTF-8?q?=E5=9B=BD=E5=86=85=E9=95=9C=E5=83=8F=E6=94=AF=E6=8C=81?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ deploy-pm2.sh        | 36 +++++++++++++++++++++++++++++-------
+ deploy.sh            | 30 ++++++++++++++++++++++++++----
+ nginx-node-deploy.sh | 32 +++++++++++++++++++++++++++-----
+ 3 files changed, 82 insertions(+), 16 deletions(-)
+
+diff --git a/deploy-pm2.sh b/deploy-pm2.sh
+index 2c05b33..8b539c4 100644
+--- a/deploy-pm2.sh
++++ b/deploy-pm2.sh
+@@ -7,32 +7,54 @@ echo "确保您的服务器已安装Node.js v18或更高版本"
+ echo "创建数据目录..."
+ mkdir -p data
+ 
++# 设置npm镜像
++echo "设置npm镜像为淘宝镜像..."
++npm config set registry https://registry.npmmirror.com
++
+ # 安装PM2（如果需要）
+ if ! command -v pm2 &>/dev/null; then
+     echo "安装PM2..."
+-    npm install -g pm2
++    npm install -g pm2 --registry=https://registry.npmmirror.com
+ 
+     # 如果安装失败，可能需要sudo权限
+     if ! command -v pm2 &>/dev/null; then
+         echo "尝试使用sudo安装PM2（可能需要输入密码）..."
+-        sudo npm install -g pm2
++        sudo npm install -g pm2 --registry=https://registry.npmmirror.com
+     fi
+ fi
+ 
+ # 检查PM2是否安装成功
+ if ! command -v pm2 &>/dev/null; then
+     echo "错误: PM2安装失败，请手动安装后重试"
+-    echo "  sudo npm install -g pm2"
++    echo "  sudo npm install -g pm2 --registry=https://registry.npmmirror.com"
+     exit 1
+ fi
+ 
+ # 安装依赖
+ echo "安装依赖（这可能需要几分钟时间）..."
+-npm install
++npm install --registry=https://registry.npmmirror.com
++if [ $? -ne 0 ]; then
++    echo "依赖安装失败，尝试使用CNPM..."
++    npm install -g cnpm --registry=https://registry.npmmirror.com
++    cnpm install
+ 
+-# 构建应用
+-echo "构建应用..."
+-npm run build
++    # 如果仍然失败，尝试使用国内CDN安装next
++    if [ $? -ne 0 ]; then
++        echo "使用CNPM安装失败，尝试直接安装关键依赖..."
++        npm install next@15.2.3 react@18.3.1 react-dom@18.3.1 --registry=https://registry.npmmirror.com
++    fi
++fi
++
++# 手动检查next命令是否可用，如果不可用则使用npx
++NEXT_CMD="./node_modules/.bin/next"
++if [ ! -f "$NEXT_CMD" ]; then
++    echo "使用npx构建应用..."
++    npx next build
++else
++    # 构建应用
++    echo "构建应用..."
++    npm run build
++fi
+ 
+ # 检查是否已有运行的实例
+ if pm2 list | grep -q "domain-monitor"; then
+diff --git a/deploy.sh b/deploy.sh
+index 856b3d9..32c55af 100644
+--- a/deploy.sh
++++ b/deploy.sh
+@@ -7,13 +7,35 @@ echo "确保您的服务器已安装Node.js v18或更高版本"
+ echo "创建数据目录..."
+ mkdir -p data
+ 
++# 设置npm镜像
++echo "设置npm镜像为淘宝镜像..."
++npm config set registry https://registry.npmmirror.com
++
+ # 安装依赖
+ echo "安装依赖（这可能需要几分钟时间）..."
+-npm install
++npm install --registry=https://registry.npmmirror.com
++if [ $? -ne 0 ]; then
++    echo "依赖安装失败，尝试使用CNPM..."
++    npm install -g cnpm --registry=https://registry.npmmirror.com
++    cnpm install
++
++    # 如果仍然失败，尝试使用国内CDN安装next
++    if [ $? -ne 0 ]; then
++        echo "使用CNPM安装失败，尝试直接安装关键依赖..."
++        npm install next@15.2.3 react@18.3.1 react-dom@18.3.1 --registry=https://registry.npmmirror.com
++    fi
++fi
+ 
+-# 构建应用
+-echo "构建应用..."
+-npm run build
++# 手动检查next命令是否可用，如果不可用则使用npx
++NEXT_CMD="./node_modules/.bin/next"
++if [ ! -f "$NEXT_CMD" ]; then
++    echo "使用npx构建应用..."
++    npx next build
++else
++    # 构建应用
++    echo "构建应用..."
++    npm run build
++fi
+ 
+ # 检查端口是否被占用
+ if lsof -Pi :9769 -sTCP:LISTEN -t >/dev/null; then
+diff --git a/nginx-node-deploy.sh b/nginx-node-deploy.sh
+index 38a7d87..8a62747 100644
+--- a/nginx-node-deploy.sh
++++ b/nginx-node-deploy.sh
+@@ -15,13 +15,35 @@ fi
+ echo "创建数据目录..."
+ mkdir -p data
+ 
++# 设置npm镜像
++echo "设置npm镜像为淘宝镜像..."
++npm config set registry https://registry.npmmirror.com
++
+ # 安装依赖
+ echo "安装依赖（这可能需要几分钟时间）..."
+-npm install
++npm install --registry=https://registry.npmmirror.com
++if [ $? -ne 0 ]; then
++    echo "依赖安装失败，尝试使用CNPM..."
++    npm install -g cnpm --registry=https://registry.npmmirror.com
++    cnpm install
++
++    # 如果仍然失败，尝试使用国内CDN安装next
++    if [ $? -ne 0 ]; then
++        echo "使用CNPM安装失败，尝试直接安装关键依赖..."
++        npm install next@15.2.3 react@18.3.1 react-dom@18.3.1 --registry=https://registry.npmmirror.com
++    fi
++fi
+ 
+-# 构建应用
+-echo "构建应用..."
+-npm run build
++# 手动检查next命令是否可用，如果不可用则使用npx
++NEXT_CMD="./node_modules/.bin/next"
++if [ ! -f "$NEXT_CMD" ]; then
++    echo "使用npx构建应用..."
++    npx next build
++else
++    # 构建应用
++    echo "构建应用..."
++    npm run build
++fi
+ 
+ # 获取服务器IP
+ SERVER_IP=$(hostname -I | awk '{print $1}')
+@@ -60,7 +82,7 @@ echo "重启Nginx (需要sudo权限)"
+ sudo systemctl restart nginx
+ 
+ # 检查端口是否被占用
+-if lsof -Pi :9769 -sTCP:LISTEN -t >/dev/null ; then
++if lsof -Pi :9769 -sTCP:LISTEN -t >/dev/null; then
+     echo "警告: 端口9769已被占用，尝试关闭现有进程..."
+     kill $(lsof -t -i:9769) 2>/dev/null || true
+     sleep 2
+-- 
+2.49.0.windows.1
+
