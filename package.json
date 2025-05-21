@@ -9,10 +9,7 @@
     "build": "next build",
     "start": "next start -p 9769",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "docker:build": "docker-compose build",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.8.0",

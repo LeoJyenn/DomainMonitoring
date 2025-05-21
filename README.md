@@ -8,7 +8,6 @@
 - 简洁美观的用户界面
 - 支持添加、编辑和删除域名
 - 数据持久化存储
-- Docker容器化部署
 
 ## 技术栈
 
@@ -16,37 +15,12 @@
 - React 18
 - TypeScript
 - Tailwind CSS
-- Docker
 
 ## 快速开始
 
-### 使用Docker运行（推荐）
-
-1. 确保您的系统已安装Docker和Docker Compose
-
-2. 克隆仓库:
-   ```bash
-   git clone https://github.com/LeoJyenn/DomainMonitoring.git
-   cd DomainMonitoring
-   ```
-
-3. 构建并启动容器:
-   ```bash
-   # 构建Docker镜像
-   docker-compose build
-   
-   # 在后台启动服务
-   docker-compose up -d
-   ```
-
-4. 访问应用:
-   浏览器中打开 `http://localhost:9769`
-
-### 其他部署方式
-
 所有部署方法的前置步骤：
 
-1. 克隆仓库（如果还没有）:
+1. 克隆仓库:
    ```bash
    git clone https://github.com/LeoJyenn/DomainMonitoring.git
    ```
@@ -56,119 +30,99 @@
    cd DomainMonitoring  
    ```
 
-#### 1. 使用简化版Docker（更快的构建）
+### VPS部署选项
 
-1. 确保系统已安装Docker
+#### 1. 使用PM2进程管理器部署（推荐）
 
-2. 为脚本添加执行权限（Linux/MacOS）:
-   ```bash
-   chmod +x docker-simple.sh
-   ```
-   
-   Windows用户可跳过此步骤，直接使用:
-   ```powershell
-   # PowerShell
-   .\docker-simple.sh
-   ```
-   
-   或者:
-   ```cmd
-   # CMD
-   bash docker-simple.sh
-   ```
-
-3. 如遇到Dockerfile语法错误问题，请确保Dockerfile.simple中的RUN指令正确使用续行符(\):
-   ```Dockerfile
-   # 正确的语法
-   RUN npm ci --only=production && \
-       npm run build && \
-       npm cache clean --force
-   ```
-
-4. 运行脚本构建并启动:
-   ```bash
-   ./docker-simple.sh  # Linux/MacOS
-   ```
-
-5. 访问应用:
-   浏览器中打开 `http://localhost:9769`
-
-#### 2. 直接本地部署（无需Docker）
+PM2是Node.js应用程序的进程管理器，可以保持应用程序持续运行。
 
 1. 确保系统已安装Node.js (推荐v18或更高版本)
 
-2. 为脚本添加执行权限（Linux/MacOS）:
-   ```bash
-   chmod +x deploy.sh
-   ```
-   
-   Windows用户可跳过此步骤，直接使用:
-   ```powershell
-   # PowerShell
-   .\deploy.sh
-   ```
-   
-   或者:
-   ```cmd
-   # CMD
-   bash deploy.sh
-   ```
-
-3. 运行部署脚本:
-   ```bash
-   ./deploy.sh  # Linux/MacOS
-   ```
-
-4. 访问应用:
-   浏览器中打开 `http://localhost:9769`
-
-#### 3. 使用PM2进程管理器部署
-
-1. 确保系统已安装Node.js (推荐v18或更高版本)
-
-2. 为脚本添加执行权限（Linux/MacOS）:
+2. 为脚本添加执行权限:
    ```bash
    chmod +x deploy-pm2.sh
-   ```
-   
-   Windows用户可跳过此步骤，直接使用:
-   ```powershell
-   # PowerShell
-   .\deploy-pm2.sh
-   ```
-   
-   或者:
-   ```cmd
-   # CMD
-   bash deploy-pm2.sh
    ```
 
 3. 运行PM2部署脚本:
    ```bash
-   ./deploy-pm2.sh  # Linux/MacOS
+   ./deploy-pm2.sh
    ```
 
 4. 访问应用:
-   浏览器中打开 `http://localhost:9769`
+   浏览器中打开 `http://服务器IP:9769`
 
-#### 4. 使用Nginx+Node部署
+**PM2管理命令:**
+- 查看日志: `pm2 logs domain-monitor`
+- 停止应用: `pm2 stop domain-monitor`
+- 重启应用: `pm2 restart domain-monitor`
+- 设置开机自启: `pm2 startup` 然后按提示执行命令，最后 `pm2 save`
+
+#### 2. 使用Nginx+Node部署
+
+适合需要配置域名访问的生产环境。
 
 1. 确保系统已安装Node.js和Nginx
 
-2. 为脚本添加执行权限（Linux/MacOS）:
+2. 为脚本添加执行权限:
    ```bash
    chmod +x nginx-node-deploy.sh
    ```
-   
-   Windows用户注意：此部署方式主要针对Linux系统，Windows用户需要手动配置Nginx
 
 3. 运行Nginx部署脚本:
    ```bash
-   ./nginx-node-deploy.sh  # Linux/MacOS
+   ./nginx-node-deploy.sh
    ```
 
 4. 访问应用:
-   浏览器中打开服务器IP地址或域名
+   浏览器中打开服务器IP地址或配置的域名
+
+**注意：** 如果需要配置HTTPS，请修改生成的Nginx配置文件，添加SSL证书配置。
+
+#### 3. 直接部署（简单方式）
+
+适合临时测试或个人使用。
+
+1. 确保系统已安装Node.js (推荐v18或更高版本)
+
+2. 为脚本添加执行权限:
+   ```bash
+   chmod +x deploy.sh
+   ```
+
+3. 运行部署脚本:
+   ```bash
+   ./deploy.sh
+   ```
+
+4. 访问应用:
+   浏览器中打开 `http://服务器IP:9769`
+
+**注意：** 此方法在终端关闭后会继续在后台运行，日志保存在app.log文件中。
+
+#### 4. 使用系统服务实现自启动（适用于大多数Linux服务器）
+
+在VPS中设置系统服务，实现服务器重启后自动启动应用：
+
+1. 确保系统已安装Node.js (推荐v18或更高版本)
+
+2. 为脚本添加执行权限:
+   ```bash
+   chmod +x vps-autostart.sh
+   ```
+
+3. 运行自启动配置脚本:
+   ```bash
+   ./vps-autostart.sh
+   ```
+
+4. 访问应用:
+   浏览器中打开 `http://服务器IP:9769`
+
+**系统服务管理命令:**
+- 检查状态: `sudo systemctl status domain-monitor.service`
+- 启动服务: `sudo systemctl start domain-monitor.service`
+- 停止服务: `sudo systemctl stop domain-monitor.service`
+- 查看日志: `sudo journalctl -u domain-monitor.service`
 
 ### 手动开发/运行
 
@@ -194,7 +148,7 @@
 
 ## 数据持久化
 
-系统配置了持久化卷存储，您的域名数据将保存在Docker卷`domain_data`中。即使容器重启或更新，数据也不会丢失。
+系统使用文件系统存储域名数据，确保数据不会丢失。数据文件保存在项目根目录的`data`文件夹中。
 
 ## 支持的架构
 
@@ -204,9 +158,8 @@
 ## 端口配置
 
 默认情况下，应用运行在`9769`端口。如需修改，请更新以下文件:
-- `docker-compose.yml`中的端口映射
-- `Dockerfile`中的`PORT`环境变量
 - `package.json`中的开发和启动脚本
+- 如果使用Nginx，需更新Nginx配置中的代理端口
 
 ## 配置
 
