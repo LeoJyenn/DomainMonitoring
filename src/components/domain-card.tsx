@@ -1,4 +1,3 @@
-
 "use client";
 
 import { differenceInDays, format, isPast, isToday, isValid } from "date-fns";
@@ -36,17 +35,24 @@ interface DomainCardProps {
 export function DomainCard({ domain, onEdit, onDelete }: DomainCardProps) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const expiration = new Date(domain.expirationDate);
-  expiration.setHours(0,0,0,0);
 
-  const daysUntilExpiration = differenceInDays(expiration, today);
-  const expired = isPast(expiration) && !isToday(expiration);
+  // 确保过期日期是有效的Date对象
+  const isValidExpDate = isValid(domain.expirationDate);
+  const expiration = isValidExpDate ? domain.expirationDate : new Date();
+  expiration.setHours(0, 0, 0, 0);
+
+  const daysUntilExpiration = isValidExpDate ? differenceInDays(expiration, today) : 0;
+  const expired = isValidExpDate ? (isPast(expiration) && !isToday(expiration)) : false;
 
   let statusText = `剩余 ${daysUntilExpiration} 天到期`;
   let statusColor: "destructive" | "warning" | "success" = "success";
   let StatusIcon = CheckCircle2;
 
-  if (expired) {
+  if (!isValidExpDate) {
+    statusText = "日期无效";
+    statusColor = "destructive";
+    StatusIcon = AlertTriangle;
+  } else if (expired) {
     statusText = `${Math.abs(daysUntilExpiration)} 天前已过期`;
     statusColor = "destructive";
     StatusIcon = AlertTriangle;
@@ -63,8 +69,8 @@ export function DomainCard({ domain, onEdit, onDelete }: DomainCardProps) {
     statusColor = "warning";
     StatusIcon = Clock;
   }
-  
-  if(statusColor === 'success' && daysUntilExpiration > 0) {
+
+  if (statusColor === 'success' && daysUntilExpiration > 0) {
     statusText = `剩余 ${daysUntilExpiration} 天到期`;
   }
 
@@ -82,7 +88,7 @@ export function DomainCard({ domain, onEdit, onDelete }: DomainCardProps) {
     "text-xs transition-opacity duration-200",
     {
       'text-destructive': statusColor === 'destructive',
-      'text-yellow-700 dark:text-yellow-400': statusColor === 'warning', 
+      'text-yellow-700 dark:text-yellow-400': statusColor === 'warning',
       'text-green-700 dark:text-green-400': statusColor === 'success',
       'text-muted-foreground': statusColor !== 'destructive' && statusColor !== 'warning' && statusColor !== 'success',
     }
@@ -109,7 +115,7 @@ export function DomainCard({ domain, onEdit, onDelete }: DomainCardProps) {
                 <AlertDialogHeader>
                   <AlertDialogTitle>您确定吗？</AlertDialogTitle>
                   <AlertDialogDescription>
-                    此操作无法撤销。这将从您的列表中永久删除域名 “{domain.name}”。
+                    此操作无法撤销。这将从您的列表中永久删除域名 "{domain.name}"。
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -127,17 +133,17 @@ export function DomainCard({ domain, onEdit, onDelete }: DomainCardProps) {
       <CardContent className="flex-grow pt-0 pb-3 px-6">
         <div className="text-xs text-muted-foreground flex items-center gap-1.5">
           <CalendarDays className="h-3.5 w-3.5" />
-          <span>添加于: {isValid(new Date(domain.dateAdded)) ? format(new Date(domain.dateAdded), "PPP", { locale: zhCN }) : '日期无效'}</span>
+          <span>添加于: {isValid(domain.dateAdded) ? format(domain.dateAdded, "PPP", { locale: zhCN }) : '日期无效'}</span>
         </div>
       </CardContent>
 
       <CardFooter className="flex flex-col items-center justify-center pt-3 pb-4 border-t">
         <div className={dateDisplayClasses}>
           <StatusIcon className="h-4 w-4" />
-          到期时间：{isValid(expiration) ? format(expiration, "PPP", { locale: zhCN }) : '日期无效'}
+          到期时间：{isValidExpDate ? format(expiration, "PPP", { locale: zhCN }) : '日期无效'}
         </div>
         <p className={statusTextClasses}>
-          {isValid(expiration) ? statusText : ''}
+          {isValidExpDate ? statusText : '日期无效'}
         </p>
       </CardFooter>
     </Card>
